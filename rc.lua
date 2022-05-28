@@ -129,7 +129,17 @@ mytextclock = wibox.widget.textclock()
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
-                    awful.button({ }, 1, function(t) t:view_only() end),
+                    awful.button({ }, 1, function(t)
+                        for j = 1, screen.count() do
+                            local tag = awful.tag.gettags(j)[t.index]
+                            if tag then
+                               tag:view_only()
+                            end
+                        end
+                        t:view_only()
+                        naughty.notify({text="Thing happen to " .. t.index})
+                    end),
+                    awful.button({ "Mod1" }, 1, function(t) t:view_only() end),
                     awful.button({ modkey }, 1, function(t)
                                               if client.focus then
                                                   client.focus:move_to_tag(t)
@@ -328,8 +338,24 @@ globalkeys = gears.table.join(
               end,
               {description = "restore minimized", group = "client"}),
 
+    -- Switch Tags Simultaneously
+    awful.key({ modkey, "Control"   }, "Left", 
+    function()
+        for i = 1, screen.count() do
+            awful.tag.viewprev(i)
+        end
+    end ),
+
+    awful.key({ modkey, "Control"   }, "Right", 
+    function()
+        for i = 1, screen.count() do
+            awful.tag.viewnext(i)
+        end
+    end ),
+
     -- Prompt
-    awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
+    -- awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
+    awful.key({ modkey }, "r", function () awful.util.spawn("dmenu_run") end,
               {description = "run prompt", group = "launcher"}),
 
     awful.key({ modkey }, "x",
@@ -399,13 +425,24 @@ for i = 1, 9 do
         -- View tag only.
         awful.key({ modkey }, "#" .. i + 9,
                   function ()
+                        for j = 1, screen.count() do
+                            local tag = awful.tag.gettags(j)[i]
+                            if tag then
+                               tag:view_only()
+                            end
+                        end
+                  end,
+                  {description = "view tag #"..i, group = "tag"}),
+        -- View tag only [all screens].
+        awful.key({ modkey, "Mod1" }, "#" .. i + 9,
+                  function ()
                         local screen = awful.screen.focused()
                         local tag = screen.tags[i]
                         if tag then
                            tag:view_only()
                         end
                   end,
-                  {description = "view tag #"..i, group = "tag"}),
+                  {description = "view tag [all screens] #"..i, group = "tag"}),
         -- Toggle tag display.
         awful.key({ modkey, "Control" }, "#" .. i + 9,
                   function ()
