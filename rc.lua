@@ -1,10 +1,9 @@
--- ██████╗░██╗░░░██╗
--- ██╔══██╗██║░░░██║  /* Viraj Kaushalye (DV)
--- ██║░░██║╚██╗░██╔╝   * github.com/dvthedev
--- ██║░░██║░╚████╔╝░   * ---
--- ██████╔╝░░╚██╔╝░░   */
--- ╚═════╝░░░░╚═╝░░░
-
+-- ░██████╗░██╗░░░██╗
+-- ░██╔══██╗██║░░░██║  /* Viraj Kaushalye (DV)
+-- ░██║░░██║╚██╗░██╔╝   * github.com/dvthedev
+-- ░██║░░██║░╚████╔╝░   * ---
+-- ░██████╔╝░░╚██╔╝░░   */
+-- ░╚═════╝░░░░╚═╝░░░
 
 -- If LuaRocks is installed, make sure that packages installed through it are
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
@@ -60,7 +59,7 @@ end
 beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "x-terminal-emulator"
+terminal = "alacritty"
 editor = os.getenv("EDITOR") or "editor"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -73,22 +72,8 @@ modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
-    awful.layout.suit.floating,
-    awful.layout.suit.tile,
-    awful.layout.suit.tile.left,
-    awful.layout.suit.tile.bottom,
-    awful.layout.suit.tile.top,
-    awful.layout.suit.fair,
-    awful.layout.suit.fair.horizontal,
-    awful.layout.suit.spiral,
     awful.layout.suit.spiral.dwindle,
-    awful.layout.suit.max,
-    awful.layout.suit.max.fullscreen,
-    awful.layout.suit.magnifier,
-    awful.layout.suit.corner.nw,
-    -- awful.layout.suit.corner.ne,
-    -- awful.layout.suit.corner.sw,
-    -- awful.layout.suit.corner.se,
+    awful.layout.suit.floating,
 }
 -- }}}
 
@@ -145,7 +130,6 @@ local taglist_buttons = gears.table.join(
                             end
                         end
                         t:view_only()
-                        naughty.notify({text="Thing happen to " .. t.index})
                     end),
                     awful.button({ "Mod1" }, 1, function(t) t:view_only() end),
                     awful.button({ modkey }, 1, function(t)
@@ -158,9 +142,9 @@ local taglist_buttons = gears.table.join(
                                               if client.focus then
                                                   client.focus:toggle_tag(t)
                                               end
-                                          end),
-                    awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
-                    awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
+                                          end)
+                    -- awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
+                    -- awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end),
                 )
 
 local tasklist_buttons = gears.table.join(
@@ -205,7 +189,7 @@ awful.screen.connect_for_each_screen(function(s)
     set_wallpaper(s)
 
     -- Each screen has its own tag table.
-    awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+    awful.tag({ "HOME [1]", "ENT [2]", "-3-", "-4-", "TEST [5]", "-6-", "-7-", "VPN [8]", "CG [9]" }, s, awful.layout.layouts[1])
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -257,9 +241,9 @@ end)
 
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
-    awful.button({ }, 3, function () mymainmenu:toggle() end),
-    awful.button({ }, 4, awful.tag.viewnext),
-    awful.button({ }, 5, awful.tag.viewprev)
+    awful.button({ }, 3, function () mymainmenu:toggle() end)
+    -- awful.button({ }, 4, awful.tag.viewnext),
+    -- awful.button({ }, 5, awful.tag.viewprev)
 ))
 -- }}}
 
@@ -329,10 +313,6 @@ globalkeys = gears.table.join(
               {description = "increase the number of columns", group = "layout"}),
     awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1, nil, true)    end,
               {description = "decrease the number of columns", group = "layout"}),
-    awful.key({ modkey,           }, "space", function () awful.layout.inc( 1)                end,
-              {description = "select next", group = "layout"}),
-    awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(-1)                end,
-              {description = "select previous", group = "layout"}),
 
     awful.key({ modkey, "Control" }, "n",
               function ()
@@ -363,7 +343,7 @@ globalkeys = gears.table.join(
 
     -- Prompt
     -- awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
-    awful.key({ modkey }, "r", function () awful.util.spawn("dmenu_run") end,
+    awful.key({ modkey }, "space", function () awful.util.spawn("dmenu_run") end,
               {description = "run prompt", group = "launcher"}),
 
     awful.key({ modkey }, "x",
@@ -378,7 +358,33 @@ globalkeys = gears.table.join(
               {description = "lua execute prompt", group = "awesome"}),
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end,
-              {description = "show the menubar", group = "launcher"})
+              {description = "show the menubar", group = "launcher"}),
+
+	-- Run Application Shortcuts
+	awful.key({ modkey, "Mod1" }, "g", function () awful.util.spawn("google-chrome") end, { description = "open chrome", group = "Apps" }),
+	awful.key({ modkey, "Mod1" }, "c", function () awful.util.spawn("google-chrome --new-window https://mail.google.com/chat/u/1/#chat/welcome") end, { description = "open google chat", group = "Apps" }),
+	awful.key({ modkey, "Mod1" }, "v", function () awful.util.spawn("forticlient") end, { description = "open forti client", group = "Apps" }),
+	awful.key({ modkey, "Mod1" }, "r", function () awful.util.spawn("remmina") end, { description = "open remmina", group = "Apps" }),
+
+	-- Make Workspace
+	awful.key({ modkey, "Control", "Mod1" }, "j",
+		function ()
+			awful.util.spawn("forticlient")
+			awful.util.spawn("remmina")
+			awful.util.spawn("google-chrome --new-window https://mail.google.com/chat/u/1/#chat/welcome")
+			awful.util.spawn("google-chrome https://codegen.atlassian.net/jira/software/c/projects/TC/boards/613")
+			awful.util.spawn("google-chrome https://drive.google.com/u/1/open?id=1Ys6vU29yDH3Xcx5IL7aNxcwU1wrTWkICGfNK4S3YWVM")
+			local vpn_tag = awful.tag.gettags(1)[8]
+			local rd_tag = awful.tag.gettags(2)[9]
+            if vpn_tag then
+				vpn_tag:view_only()
+            end
+			if rd_tag then
+				rd_tag:view_only()
+			end
+		end,
+		{ description = "make CG workspace", group = "Workspaces" }
+	)
 )
 
 clientkeys = gears.table.join(
@@ -552,13 +558,38 @@ awful.rules.rules = {
       }, properties = { floating = true }},
 
     -- Add titlebars to normal clients and dialogs
-    { rule_any = {type = { "normal", "dialog" }
+    { rule_any = {type = { "dialog" }
       }, properties = { titlebars_enabled = true }
     },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
     -- { rule = { class = "Firefox" },
     --   properties = { screen = 1, tag = "2" } },
+	
+    -- Open google chrome always on screen 1
+	{ rule = { instance = "google-chrome" },
+		properties = { screen = 1 } 
+	},
+	
+    -- Open google chat always on tag 9 screen 1
+	{ rule = { name = "Untitled - Google Chrome" },
+		properties = { screen = 1, tag = "CG [9]" } 
+	},
+
+	-- Open FortiClient on tag 8 screen 1
+	{ rule = { name = "FortiClient" },
+		properties = { screen = 1, tag = "VPN [8]" } 
+	},
+	
+	-- Open Remmina on tag 9 screen 2
+	{ rule = { class = "org.remmina.Remmina" },
+		properties = { screen = 2, tag = "CG [9]", floating = true } 
+	},
+
+    -- Open spotify always on tag 2 screen 1
+	-- { rule = { name = "Spotify" },
+	-- properties = { screen = 1, tag = "ENT [2]" }
+	-- },
 }
 -- }}}
 
@@ -575,6 +606,9 @@ client.connect_signal("manage", function (c)
         -- Prevent clients from being unreachable after screen count changes.
         awful.placement.no_offscreen(c)
     end
+
+	-- TODO: remove
+	naughty.notify({title="New Client: " .. (c.name and c.name or "--"), text="class: " .. (c.class and c.class or "--") .. " | instance: " .. (c.instance and c.instance or "--") .. " |  type: " .. (c.type and c.type or "--")})
 end)
 
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
@@ -622,6 +656,13 @@ client.connect_signal("mouse::enter", function(c)
     c:emit_signal("request::activate", "mouse_enter", {raise = false})
 end)
 
+-- Gaps
+beautiful.useless_gap=3
+
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
+
+awful.spawn.with_shell("compton")
+awful.spawn.with_shell("nitrogen --restore")
+
